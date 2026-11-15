@@ -203,7 +203,7 @@ export default function OverviewDashboard({ onNavigate, onResetDemo, isDemo }) {
   };
 
   // Execute single point prediction using active backend API
-  const runPrediction = async (inputPayload) => {
+  const runPrediction = async (inputPayload, shouldRedirect = false) => {
     setPredicting(true);
     setPredictionError(null);
     try {
@@ -228,14 +228,18 @@ export default function OverviewDashboard({ onNavigate, onResetDemo, isDemo }) {
 
       const res = await api.predictSingle(payload);
       setPredictionResult(res);
-      // Cache this active prediction so other pages like ReportsDownloads can view it
+      // Cache this active prediction so other pages like MasterPredictionResults and ReportsDownloads can view it
       if (typeof window !== 'undefined') {
         localStorage.setItem('geoflood_latest_prediction', JSON.stringify({
-          locationName: inputPayload.locationName,
+          locationName: inputPayload.locationName || `${payload.latitude.toFixed(3)}°N, ${payload.longitude.toFixed(3)}°E`,
           timestamp: new Date().toISOString(),
           inputs: payload,
           result: res
         }));
+      }
+
+      if (shouldRedirect && onNavigate) {
+        onNavigate('Master Prediction Results');
       }
     } catch (err) {
       console.error('Prediction error:', err);
@@ -257,7 +261,10 @@ export default function OverviewDashboard({ onNavigate, onResetDemo, isDemo }) {
       else if (score < 0.8) { cat = 'High'; hex = '#F97316'; }
       else { cat = 'Very High'; hex = '#EF4444'; }
 
-      setPredictionResult({
+      const fallbackResult = {
+        prediction_id: `FALLBACK-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        location_name: inputPayload.locationName || `${inputPayload.latitude}°N, ${inputPayload.longitude}°E`,
         consensus: {
           name: 'Multi-Model Consensus Ensemble',
           score: score,
@@ -279,7 +286,19 @@ export default function OverviewDashboard({ onNavigate, onResetDemo, isDemo }) {
             { feature: 'slope', contribution: slope > 8 ? -0.22 : 0.18, value: slope }
           ]
         }
-      });
+      };
+      setPredictionResult(fallbackResult);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('geoflood_latest_prediction', JSON.stringify({
+          locationName: inputPayload.locationName || `${inputPayload.latitude}°N, ${inputPayload.longitude}°E`,
+          timestamp: new Date().toISOString(),
+          inputs: inputPayload,
+          result: fallbackResult
+        }));
+      }
+      if (shouldRedirect && onNavigate) {
+        onNavigate('Master Prediction Results');
+      }
     } finally {
       setPredicting(false);
     }
@@ -596,12 +615,12 @@ export default function OverviewDashboard({ onNavigate, onResetDemo, isDemo }) {
 
               <button
                 type="button"
-                onClick={() => runPrediction(params)}
+                onClick={() => runPrediction(params, true)}
                 disabled={predicting}
                 className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-navy-950 font-black text-xs shadow-glow-cyan transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 {predicting ? <RefreshCw size={13} className="animate-spin" /> : <Play size={13} />}
-                <span>{predicting ? 'Evaluating...' : 'Analyze Susceptibility'}</span>
+                <span>{predicting ? 'Evaluating Models...' : 'Analyse Location & Open Master Results'}</span>
               </button>
             </div>
           </div>
@@ -795,11 +814,12 @@ export default function OverviewDashboard({ onNavigate, onResetDemo, isDemo }) {
                 <div className="mt-3 pt-2 border-t border-navy-800/80 flex items-center justify-between">
                   <button
                     type="button"
-                    onClick={() => onNavigate('Flood Susceptibility Prediction')}
-                    className="text-[11px] font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition"
+                    onClick={() => onNavigate('Master Prediction Results')}
+                    className="text-[11px] font-bold text-cyan-300 hover:text-cyan-200 flex items-center gap-1.5 transition bg-cyan-950/70 hover:bg-cyan-900/80 px-3 py-1.5 rounded-lg border border-cyan-500/40 shadow-glow-cyan cursor-pointer"
                   >
-                    <span>Full Feature Attributions</span>
-                    <ArrowUpRight size={12} />
+                    <Sparkles size={13} className="text-cyan-400" />
+                    <span>Open Master Results Dossier</span>
+                    <ArrowUpRight size={13} />
                   </button>
                   <button
                     type="button"

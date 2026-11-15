@@ -14,6 +14,7 @@ import ModelTraining from './pages/ModelTraining';
 import HyperparameterOptimization from './pages/HyperparameterOptimization';
 import ModelComparison from './pages/ModelComparison';
 import FloodPrediction from './pages/FloodPrediction';
+import MasterPredictionResults from './pages/MasterPredictionResults';
 import GeospatialRiskMap from './pages/GeospatialRiskMap';
 import FloodImageAnalysis from './pages/FloodImageAnalysis';
 import ExplainableAI from './pages/ExplainableAI';
@@ -102,6 +103,8 @@ function AppContent() {
         return <ModelComparison />;
       case 'Flood Susceptibility Prediction':
         return <FloodPrediction onSaveHistory={handleSavePredictionToHistory} />;
+      case 'Master Prediction Results':
+        return <MasterPredictionResults onNavigate={setCurrentPage} />;
       case 'Geospatial Risk Map':
         return <GeospatialRiskMap />;
       case 'Flood Image Analysis':

@@ -242,16 +242,17 @@ export default function RiskMap({
 
     if (selectedPoint && selectedPoint.latitude && selectedPoint.longitude) {
       const { latitude, longitude } = selectedPoint;
+      const pinColor = selectedPoint.color || selectedPoint.hex || RISK_COLORS[selectedPoint.risk_category || selectedPoint.category] || '#06B6D4';
       const customIcon = L.divIcon({
         className: 'custom-active-pin',
         html: `
-          <div style="position: relative; width: 24px; height: 24px;">
-            <div style="position: absolute; inset: -4px; border-radius: 50%; background: rgba(6, 182, 212, 0.4); animation: pulse-ring 2s infinite;"></div>
-            <div style="position: absolute; inset: 0; border-radius: 50%; background: #06B6D4; border: 2px solid #FFFFFF; box-shadow: 0 0 10px #06B6D4;"></div>
+          <div style="position: relative; width: 26px; height: 26px;">
+            <div style="position: absolute; inset: -6px; border-radius: 50%; background: ${pinColor}55; animation: pulse-ring 2s infinite;"></div>
+            <div style="position: absolute; inset: 0; border-radius: 50%; background: ${pinColor}; border: 2.5px solid #FFFFFF; box-shadow: 0 0 12px ${pinColor};"></div>
           </div>
         `,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
       });
 
       activeMarker.current = L.marker([latitude, longitude], { icon: customIcon }).addTo(mapInstance.current);

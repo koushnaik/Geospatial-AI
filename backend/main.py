@@ -251,6 +251,7 @@ def get_training_status(job_id: str):
 # 5. Prediction
 # --------------------------------------------------------------------------
 class SinglePredictionRequest(BaseModel):
+    location_name: Optional[str] = "Selected Location"
     latitude: float = 10.150
     longitude: float = 76.400
     elevation: float = 12.5

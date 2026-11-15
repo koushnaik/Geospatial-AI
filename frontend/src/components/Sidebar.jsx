@@ -3,7 +3,7 @@ import {
   LayoutDashboard, History, Database, Filter, BarChart3,
   Cpu, Award, Compass, Map, Image as ImageIcon, Eye,
   Layers, Download, Settings, RefreshCw, ChevronLeft, ChevronRight,
-  Sliders, Waves, Activity, ShieldCheck
+  Sliders, Waves, Activity, ShieldCheck, Sparkles
 } from 'lucide-react';
 
 const NAV_SECTIONS = [
@@ -34,6 +34,7 @@ const NAV_SECTIONS = [
     category: 'Inference & Spatial Risk',
     items: [
       { name: 'Flood Susceptibility Prediction', icon: Compass },
+      { name: 'Master Prediction Results', icon: Sparkles },
       { name: 'Geospatial Risk Map', icon: Map },
     ]
   },
