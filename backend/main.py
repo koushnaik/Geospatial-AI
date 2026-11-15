@@ -31,6 +31,9 @@ from src.prediction import predict_all_models, DEFAULT_STUDY_AREAS
 from src.explainability import explain_global, explain_local_prediction
 from src.segmentation_module import run_segmentation_inference, HISTORICAL_AUDIT
 from src.report_generator import generate_pdf_report
+from src.geocoding_service import (
+    CALIBRATED_LOCATIONS, lookup_by_query, lookup_by_coordinates
+)
 
 app = FastAPI(
     title="GeoFlood AI — API Backend",
@@ -393,11 +396,31 @@ def reset_demo_project():
     }
 
 # --------------------------------------------------------------------------
-# 10. Study Areas / Geospatial Locations
+# 10. Study Areas / Geospatial Locations & Calibration Lookup
 # --------------------------------------------------------------------------
 @app.get("/api/study-areas")
 def get_study_areas():
     return DEFAULT_STUDY_AREAS
+
+@app.get("/api/geospatial/locations")
+def list_calibrated_locations():
+    return {
+        "count": len(CALIBRATED_LOCATIONS),
+        "locations": CALIBRATED_LOCATIONS
+    }
+
+@app.get("/api/geospatial/search")
+def search_locations(query: str):
+    matches = lookup_by_query(query)
+    return {
+        "query": query,
+        "results": matches,
+        "count": len(matches)
+    }
+
+@app.get("/api/geospatial/location-lookup")
+def lookup_coordinates(latitude: float, longitude: float):
+    return lookup_by_coordinates(latitude, longitude)
 
 if __name__ == "__main__":
     import uvicorn

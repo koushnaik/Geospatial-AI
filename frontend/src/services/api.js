@@ -41,6 +41,9 @@ export const api = {
   generateReport: (reportType) => client.post(`/api/reports/generate?report_type=${encodeURIComponent(reportType)}`).then(r => r.data),
   resetDemo: () => client.post('/api/demo/reset').then(r => r.data),
   getStudyAreas: () => client.get('/api/study-areas').then(r => r.data),
+  getCalibratedLocations: () => client.get('/api/geospatial/locations').then(r => r.data),
+  searchLocations: (query) => client.get(`/api/geospatial/search?query=${encodeURIComponent(query)}`).then(r => r.data),
+  lookupCoordinates: (lat, lon) => client.get(`/api/geospatial/location-lookup?latitude=${lat}&longitude=${lon}`).then(r => r.data),
 };
 
 export default api;

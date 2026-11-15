@@ -43,6 +43,8 @@ dist/
 */dist/
 build/
 *.egg-info/
+reports/*.pdf
+!reports/README.md
 
 # Operating System & IDE
 .DS_Store

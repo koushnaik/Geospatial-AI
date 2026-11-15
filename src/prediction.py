@@ -211,21 +211,24 @@ def predict_all_models(
     if best_pipe is not None:
         explanation = explain_local_prediction(best_pipe, input_df)
 
+    ensemble_res = {
+        "name": "Multi-Model Consensus Ensemble",
+        "score": round(mean_prob, 4),
+        "probability": round(mean_prob, 4),
+        "predicted_class": ensemble_class,
+        "category": ens_classification["category"],
+        "color": ens_classification["color"],
+        "hex": ens_classification["hex"],
+        "description": ens_classification["description"],
+        "model_agreement_percentage": agreement,
+        "total_models": len(results)
+    }
+
     return {
         "status": "success",
         "input_features": {k: input_values.get(k, FEATURE_METADATA.get(k, {}).get("default")) for k in ALL_FEATURES},
         "model_predictions": results,
-        "ensemble": {
-            "name": "Multi-Model Consensus Ensemble",
-            "score": round(mean_prob, 4),
-            "probability": round(mean_prob, 4),
-            "predicted_class": ensemble_class,
-            "category": ens_classification["category"],
-            "color": ens_classification["color"],
-            "hex": ens_classification["hex"],
-            "description": ens_classification["description"],
-            "model_agreement_percentage": agreement,
-            "total_models": len(results)
-        },
+        "ensemble": ensemble_res,
+        "consensus": ensemble_res,
         "explanation": explanation
     }
