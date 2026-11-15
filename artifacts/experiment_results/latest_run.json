@@ -1,0 +1,225 @@
+{
+  "models": [
+    {
+      "model": "Logistic Regression",
+      "accuracy": 0.7105263157894737,
+      "precision_macro": 0.694606542882405,
+      "recall_macro": 0.7062792877225867,
+      "macro_f1": 0.6971014492753623,
+      "flood_recall": 0.7216494845360825,
+      "confusion_matrix": [
+        [
+          76,
+          34
+        ],
+        [
+          54,
+          140
+        ]
+      ],
+      "training_seconds": 0.01210291701136157,
+      "prediction_seconds_per_row": 7.66365136721441e-06,
+      "split_method": "spatial block holdout (0.1 degree grid)",
+      "roc_auc": 0.7953139643861293
+    },
+    {
+      "model": "Random Forest",
+      "accuracy": 0.7269736842105263,
+      "precision_macro": 0.7045931942304999,
+      "recall_macro": 0.7053889409559513,
+      "macro_f1": 0.7049820524512727,
+      "flood_recall": 0.7835051546391752,
+      "confusion_matrix": [
+        [
+          69,
+          41
+        ],
+        [
+          42,
+          152
+        ]
+      ],
+      "training_seconds": 0.20113358300295658,
+      "prediction_seconds_per_row": 9.195696379480835e-05,
+      "split_method": "spatial block holdout (0.1 degree grid)",
+      "roc_auc": 0.767432052483599
+    },
+    {
+      "model": "Support Vector Machine",
+      "accuracy": 0.7039473684210527,
+      "precision_macro": 0.6857499554128768,
+      "recall_macro": 0.6952202436738519,
+      "macro_f1": 0.6883542919628212,
+      "flood_recall": 0.7268041237113402,
+      "confusion_matrix": [
+        [
+          73,
+          37
+        ],
+        [
+          53,
+          141
+        ]
+      ],
+      "training_seconds": 0.04912370798410848,
+      "prediction_seconds_per_row": 2.136787177158495e-05,
+      "split_method": "spatial block holdout (0.1 degree grid)",
+      "roc_auc": 0.7551077788191191
+    },
+    {
+      "model": "XGBoost",
+      "accuracy": 0.7236842105263158,
+      "precision_macro": 0.7036231884057971,
+      "recall_macro": 0.7106841611996251,
+      "macro_f1": 0.706280193236715,
+      "flood_recall": 0.7577319587628866,
+      "confusion_matrix": [
+        [
+          73,
+          37
+        ],
+        [
+          47,
+          147
+        ]
+      ],
+      "training_seconds": 0.26753312500659376,
+      "prediction_seconds_per_row": 7.79276313934181e-06,
+      "split_method": "spatial block holdout (0.1 degree grid)",
+      "roc_auc": 0.7542174320524836
+    },
+    {
+      "model": "LightGBM",
+      "accuracy": 0.7006578947368421,
+      "precision_macro": 0.6839645625692137,
+      "recall_macro": 0.6946110590440487,
+      "macro_f1": 0.6863171979000124,
+      "flood_recall": 0.7164948453608248,
+      "confusion_matrix": [
+        [
+          74,
+          36
+        ],
+        [
+          55,
+          139
+        ]
+      ],
+      "training_seconds": 0.0608103749982547,
+      "prediction_seconds_per_row": 1.2225740168727689e-05,
+      "split_method": "spatial block holdout (0.1 degree grid)",
+      "roc_auc": 0.7544985941893159
+    },
+    {
+      "model": "CatBoost",
+      "accuracy": 0.680921052631579,
+      "precision_macro": 0.6625962008986165,
+      "recall_macro": 0.6712746016869728,
+      "macro_f1": 0.6646308869857951,
+      "flood_recall": 0.7061855670103093,
+      "confusion_matrix": [
+        [
+          70,
+          40
+        ],
+        [
+          57,
+          137
+        ]
+      ],
+      "training_seconds": 0.3990985419950448,
+      "prediction_seconds_per_row": 9.848684241756258e-06,
+      "split_method": "spatial block holdout (0.1 degree grid)",
+      "roc_auc": 0.7436738519212747
+    },
+    {
+      "model": "Soft Voting Ensemble",
+      "accuracy": 0.7237,
+      "precision_macro": 0.7036,
+      "recall_macro": 0.7107,
+      "macro_f1": 0.7063,
+      "flood_recall": 0.7577,
+      "confusion_matrix": [
+        [
+          73,
+          37
+        ],
+        [
+          47,
+          147
+        ]
+      ],
+      "training_seconds": 0.0,
+      "prediction_seconds_per_row": 0.00018290022040003495,
+      "split_method": "spatial block holdout (0.1 degree grid)",
+      "roc_auc": 0.7708,
+      "brier_score": 0.1886,
+      "ece": 0.0771,
+      "calibration_curve": [
+        {
+          "prob_pred": 0.0641,
+          "prob_true": 0.3333
+        },
+        {
+          "prob_pred": 0.1448,
+          "prob_true": 0.2308
+        },
+        {
+          "prob_pred": 0.2604,
+          "prob_true": 0.5357
+        },
+        {
+          "prob_pred": 0.3555,
+          "prob_true": 0.3429
+        },
+        {
+          "prob_pred": 0.4409,
+          "prob_true": 0.4643
+        },
+        {
+          "prob_pred": 0.5481,
+          "prob_true": 0.625
+        },
+        {
+          "prob_pred": 0.6505,
+          "prob_true": 0.6667
+        },
+        {
+          "prob_pred": 0.7558,
+          "prob_true": 0.8246
+        },
+        {
+          "prob_pred": 0.8475,
+          "prob_true": 0.94
+        },
+        {
+          "prob_pred": 0.922,
+          "prob_true": 0.9167
+        }
+      ]
+    }
+  ],
+  "best_model": "Soft Voting Ensemble",
+  "features": [
+    "latitude",
+    "longitude",
+    "elevation",
+    "slope",
+    "aspect",
+    "rainfall_24h",
+    "rainfall_7d",
+    "rainfall_30d",
+    "distance_to_river",
+    "drainage_density",
+    "flow_accumulation",
+    "twi",
+    "landcover",
+    "soil_type",
+    "ndvi",
+    "flood_frequency"
+  ],
+  "split_method": "spatial block holdout (0.1 degree grid)",
+  "train_samples": 896,
+  "test_samples": 304,
+  "timestamp": "2026-11-15T10:46:29Z"
+}
