@@ -26,7 +26,13 @@ function AppContent() {
   const [currentPage, setCurrentPage] = useState('Overview Dashboard');
   const [collapsed, setCollapsed] = useState(false);
   const [unit, setUnit] = useState(() => localStorage.getItem('geoflood-unit') || 'Square kilometers');
-  const [apiEndpoint, setApiEndpoint] = useState('http://127.0.0.1:8000');
+  const [apiEndpoint, setApiEndpoint] = useState(() => {
+    try {
+      return localStorage.getItem('geoflood-api-endpoint') || import.meta.env.VITE_GEOFLOOD_API_BASE_URL || 'http://127.0.0.1:8000';
+    } catch {
+      return 'http://127.0.0.1:8000';
+    }
+  });
   const [history, setHistory] = useState(() => {
     try {
       const saved = localStorage.getItem('geoflood-history');
@@ -42,6 +48,14 @@ function AppContent() {
   useEffect(() => {
     localStorage.setItem('geoflood-unit', unit);
   }, [unit]);
+
+  useEffect(() => {
+    try {
+      if (apiEndpoint) {
+        localStorage.setItem('geoflood-api-endpoint', apiEndpoint);
+      }
+    } catch {}
+  }, [apiEndpoint]);
 
   useEffect(() => {
     try {

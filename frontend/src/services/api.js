@@ -1,14 +1,26 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_GEOFLOOD_API_BASE_URL || 'http://127.0.0.1:8000';
+const DEFAULT_API_URL = import.meta.env.VITE_GEOFLOOD_API_BASE_URL || 'http://127.0.0.1:8000';
 
 const client = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: DEFAULT_API_URL,
   timeout: 45000,
+});
+
+// Dynamically use user-configured endpoint from Settings if available
+client.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('geoflood-api-endpoint');
+    if (saved && saved.trim()) {
+      config.baseURL = saved.trim().replace(/\/+$/, '');
+    }
+  }
+  return config;
 });
 
 export const api = {
   getHealth: () => client.get('/api/health').then(r => r.data),
+  checkHealth: () => client.get('/api/health').then(r => r.data),
   getOverview: () => client.get('/api/dashboard/overview').then(r => r.data),
   getDatasets: () => client.get('/api/datasets').then(r => r.data),
   getDatasetDetails: (id) => client.get(`/api/datasets/${id}`).then(r => r.data),
