@@ -3,12 +3,19 @@ import {
   LayoutDashboard, History, Database, Filter, BarChart3,
   Cpu, Award, Compass, Map, Image as ImageIcon, Eye,
   Layers, Download, Settings, RefreshCw, ChevronLeft, ChevronRight,
-  Sliders, Waves, Activity, ShieldCheck, Sparkles
+  Sliders, Waves, Activity, ShieldCheck, Sparkles, Terminal, Globe
 } from 'lucide-react';
 
-const NAV_SECTIONS = [
+const LIVE_NAV_ITEMS = [
+  { name: 'Live Flood Intelligence', icon: Sparkles, badge: 'Primary' },
+  { name: 'Master Prediction Results', icon: Award },
+  { name: 'Geospatial Risk Map', icon: Map },
+  { name: 'Reports & Downloads', icon: Download },
+];
+
+const RESEARCH_NAV_SECTIONS = [
   {
-    category: 'Core Platform',
+    category: 'Research Core',
     items: [
       { name: 'Overview Dashboard', icon: LayoutDashboard },
       { name: 'Historical Flood Explorer', icon: History },
@@ -34,7 +41,6 @@ const NAV_SECTIONS = [
     category: 'Inference & Spatial Risk',
     items: [
       { name: 'Flood Susceptibility Prediction', icon: Compass },
-      { name: 'Master Prediction Results', icon: Sparkles },
       { name: 'Geospatial Risk Map', icon: Map },
     ]
   },
@@ -47,7 +53,7 @@ const NAV_SECTIONS = [
     ]
   },
   {
-    category: 'Audit & Exports',
+    category: 'Audit & Infrastructure',
     items: [
       { name: 'Experiment History', icon: Activity },
       { name: 'Reports & Downloads', icon: Download },
@@ -56,7 +62,15 @@ const NAV_SECTIONS = [
   }
 ];
 
-export default function Sidebar({ currentPage, onNavigate, onResetDemo, collapsed, setCollapsed }) {
+export default function Sidebar({
+  currentPage,
+  onNavigate,
+  onResetDemo,
+  collapsed,
+  setCollapsed,
+  activeWorkspace = 'live',
+  onSwitchWorkspace
+}) {
   return (
     <aside
       className={`bg-navy-900 border-r border-navy-800 transition-all duration-300 flex flex-col justify-between shrink-0 select-none z-30 shadow-panel ${
@@ -77,7 +91,7 @@ export default function Sidebar({ currentPage, onNavigate, onResetDemo, collapse
                   <span className="text-cyan-400 font-mono text-xs">AI</span>
                 </div>
                 <div className="text-[9px] text-teal-400 font-mono tracking-wider font-semibold uppercase">
-                  Research Platform
+                  {activeWorkspace === 'live' ? 'Live Platform' : 'Research Suite'}
                 </div>
               </div>
             </div>
@@ -88,73 +102,151 @@ export default function Sidebar({ currentPage, onNavigate, onResetDemo, collapse
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-navy-800 transition"
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-navy-800 transition cursor-pointer"
+            title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           >
             {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
 
-        {/* Navigation Categories */}
-        <nav className="p-2 space-y-4 overflow-y-auto max-h-[calc(100vh-140px)]">
-          {NAV_SECTIONS.map((sec) => (
-            <div key={sec.category} className="space-y-1">
+        {/* Workspace Mode Switcher Card */}
+        {!collapsed && onSwitchWorkspace && (
+          <div className="p-3 border-b border-navy-800/80 bg-navy-950/60">
+            <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+              <span>Active Workspace</span>
+              <span className={`w-2 h-2 rounded-full ${activeWorkspace === 'live' ? 'bg-cyan-400 animate-pulse' : 'bg-purple-400'}`}></span>
+            </div>
+            <div className="grid grid-cols-2 gap-1 p-1 bg-navy-900 rounded-xl border border-navy-800 text-[11px] font-mono">
+              <button
+                type="button"
+                onClick={() => onSwitchWorkspace('live')}
+                className={`py-1.5 px-2 rounded-lg text-center transition cursor-pointer flex items-center justify-center gap-1 ${
+                  activeWorkspace === 'live'
+                    ? 'bg-cyan-500 text-navy-950 font-black shadow-glow-cyan'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Sparkles size={11} />
+                <span>Live</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onSwitchWorkspace('research')}
+                className={`py-1.5 px-2 rounded-lg text-center transition cursor-pointer flex items-center justify-center gap-1 ${
+                  activeWorkspace === 'research'
+                    ? 'bg-purple-600 text-white font-bold shadow'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Cpu size={11} />
+                <span>Research</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Items */}
+        <div className="py-2.5 overflow-y-auto max-h-[calc(100vh-210px)] scrollbar-thin">
+          {activeWorkspace === 'live' ? (
+            /* WORKSPACE 1: LIVE FLOOD INTELLIGENCE NAVIGATION */
+            <div className="px-2 space-y-1">
               {!collapsed && (
-                <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">
-                  {sec.category}
+                <div className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-400">
+                  Public Flood Intelligence
                 </div>
               )}
-              {sec.items.map((item) => {
+              {LIVE_NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
                 const isActive = currentPage === item.name;
                 return (
                   <button
                     key={item.name}
                     onClick={() => onNavigate(item.name)}
-                    title={collapsed ? item.name : undefined}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-left ${
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer text-left ${
                       isActive
-                        ? 'bg-cyan-500/15 text-cyan-400 font-semibold border-l-2 border-cyan-400 shadow-glow-cyan/20'
-                        : 'text-slate-400 hover:text-slate-100 hover:bg-navy-850'
+                        ? 'bg-gradient-to-r from-cyan-500/20 to-teal-500/10 text-cyan-300 border border-cyan-500/40 shadow-glow-cyan'
+                        : 'text-slate-400 hover:text-white hover:bg-navy-800/60'
                     }`}
+                    title={collapsed ? item.name : undefined}
                   >
-                    <Icon size={16} className={`shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
-                    {!collapsed && <span className="truncate">{item.name}</span>}
+                    <Icon size={16} className={isActive ? 'text-cyan-400' : 'text-slate-400 shrink-0'} />
+                    {!collapsed && (
+                      <span className="flex-1 truncate flex items-center justify-between">
+                        <span>{item.name}</span>
+                        {item.badge && (
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                            {item.badge}
+                          </span>
+                        )}
+                      </span>
+                    )}
                   </button>
                 );
               })}
+
+              {!collapsed && (
+                <div className="pt-4 px-1">
+                  <div className="p-3 rounded-xl bg-navy-950 border border-navy-800 text-xs space-y-2">
+                    <span className="text-[11px] font-bold text-slate-300 block">Need Advanced Tools?</span>
+                    <p className="text-[10px] text-slate-400 leading-snug">
+                      Switch to the Research Suite to inspect raw datasets, train neural models, and configure Optuna hyperparameters.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => onSwitchWorkspace('research')}
+                      className="w-full py-1.5 px-2.5 rounded-lg bg-navy-850 hover:bg-navy-800 text-cyan-300 border border-cyan-500/30 text-[11px] font-mono font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <Cpu size={12} />
+                      <span>Open Research Workspace</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          ))}
-        </nav>
+          ) : (
+            /* WORKSPACE 2: RESEARCH & ADMINISTRATION NAVIGATION */
+            <div className="px-2 space-y-3">
+              {RESEARCH_NAV_SECTIONS.map((section) => (
+                <div key={section.category}>
+                  {!collapsed && (
+                    <div className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
+                      {section.category}
+                    </div>
+                  )}
+                  <div className="space-y-0.5">
+                    {section.items.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = currentPage === item.name;
+                      return (
+                        <button
+                          key={item.name}
+                          onClick={() => onNavigate(item.name)}
+                          className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-left ${
+                            isActive
+                              ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40'
+                              : 'text-slate-400 hover:text-white hover:bg-navy-800/60'
+                          }`}
+                          title={collapsed ? item.name : undefined}
+                        >
+                          <Icon size={14} className={isActive ? 'text-purple-400' : 'text-slate-400 shrink-0'} />
+                          {!collapsed && <span className="truncate">{item.name}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Footer Area: Demo Reset & Hardware Pill */}
-      <div className="p-3 border-t border-navy-800 bg-navy-950/60">
-        {!collapsed ? (
-          <div className="space-y-2">
-            <button
-              onClick={onResetDemo}
-              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-navy-800 hover:bg-navy-700 border border-navy-700/60 text-slate-300 hover:text-white text-xs font-semibold transition"
-            >
-              <RefreshCw size={13} className="text-cyan-400" />
-              <span>Reset Demo Workspace</span>
-            </button>
-            <div className="flex items-center justify-between text-[10px] text-slate-400 px-1 font-mono">
-              <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>FastAPI 2.0</span>
-              </span>
-              <span>Apple M4</span>
-            </div>
+      {/* Footer Controls */}
+      <div className="p-3 border-t border-navy-800 bg-navy-950/40 space-y-2">
+        {!collapsed && (
+          <div className="text-[10px] font-mono text-slate-500 text-center">
+            GeoFlood AI v2.0 • M4 Silicon
           </div>
-        ) : (
-          <button
-            onClick={onResetDemo}
-            className="w-full p-2 rounded-lg bg-navy-800 hover:bg-navy-700 text-cyan-400 flex items-center justify-center transition"
-            title="Reset Demo Workspace"
-          >
-            <RefreshCw size={14} />
-          </button>
         )}
       </div>
     </aside>

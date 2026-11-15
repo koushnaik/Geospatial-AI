@@ -15,6 +15,7 @@ import HyperparameterOptimization from './pages/HyperparameterOptimization';
 import ModelComparison from './pages/ModelComparison';
 import FloodPrediction from './pages/FloodPrediction';
 import MasterPredictionResults from './pages/MasterPredictionResults';
+import LiveIntelligencePlatform from './pages/LiveIntelligencePlatform';
 import GeospatialRiskMap from './pages/GeospatialRiskMap';
 import FloodImageAnalysis from './pages/FloodImageAnalysis';
 import ExplainableAI from './pages/ExplainableAI';
@@ -24,7 +25,23 @@ import ReportsDownloads from './pages/ReportsDownloads';
 import Settings from './pages/Settings';
 
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState('Overview Dashboard');
+  const [activeWorkspace, setActiveWorkspace] = useState(() => {
+    try {
+      return localStorage.getItem('geoflood-active-workspace') || 'live';
+    } catch {
+      return 'live';
+    }
+  });
+
+  const [currentPage, setCurrentPage] = useState(() => {
+    try {
+      const savedWs = localStorage.getItem('geoflood-active-workspace') || 'live';
+      return savedWs === 'live' ? 'Live Flood Intelligence' : 'Overview Dashboard';
+    } catch {
+      return 'Live Flood Intelligence';
+    }
+  });
+
   const [collapsed, setCollapsed] = useState(false);
   const [unit, setUnit] = useState(() => localStorage.getItem('geoflood-unit') || 'Square kilometers');
   const [apiEndpoint, setApiEndpoint] = useState(() => {
@@ -83,8 +100,22 @@ function AppContent() {
     localStorage.removeItem('geoflood-history');
   };
 
+  const handleSwitchWorkspace = (workspace) => {
+    setActiveWorkspace(workspace);
+    try {
+      localStorage.setItem('geoflood-active-workspace', workspace);
+    } catch (e) {}
+    if (workspace === 'live') {
+      setCurrentPage('Live Flood Intelligence');
+    } else {
+      setCurrentPage('Overview Dashboard');
+    }
+  };
+
   const renderCurrentPage = () => {
     switch (currentPage) {
+      case 'Live Flood Intelligence':
+        return <LiveIntelligencePlatform onNavigate={setCurrentPage} onSwitchWorkspace={handleSwitchWorkspace} />;
       case 'Overview Dashboard':
         return <OverviewDashboard onNavigate={setCurrentPage} onResetDemo={handleResetDemo} isDemo={isDemo} />;
       case 'Historical Flood Explorer':
@@ -143,6 +174,8 @@ function AppContent() {
         onResetDemo={handleResetDemo}
         collapsed={collapsed}
         setCollapsed={setCollapsed}
+        activeWorkspace={activeWorkspace}
+        onSwitchWorkspace={handleSwitchWorkspace}
       />
 
       {/* Main View Area */}
@@ -154,6 +187,8 @@ function AppContent() {
           onToggleTheme={toggleTheme}
           isDemo={isDemo}
           onNavigate={setCurrentPage}
+          activeWorkspace={activeWorkspace}
+          onSwitchWorkspace={handleSwitchWorkspace}
         />
 
         {/* Dynamic Page Content with Smooth Scrolling */}

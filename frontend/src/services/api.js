@@ -44,6 +44,11 @@ export const api = {
   getCalibratedLocations: () => client.get('/api/geospatial/locations').then(r => r.data),
   searchLocations: (query) => client.get(`/api/geospatial/search?query=${encodeURIComponent(query)}`).then(r => r.data),
   lookupCoordinates: (lat, lon) => client.get(`/api/geospatial/location-lookup?latitude=${lat}&longitude=${lon}`).then(r => r.data),
+  getFloodSamples: () => client.get('/api/flood/samples').then(r => r.data),
+  getFloodModels: () => client.get('/api/flood/image/models').then(r => r.data),
+  analyzeFloodImage: (formData) => client.post('/api/flood/image/analyse', formData).then(r => r.data),
+  predictFloodForecast: (data) => client.post('/api/flood/forecast', data).then(r => r.data),
+  getSystemStatus: () => client.get('/api/research/system-status').then(r => r.data),
 };
 
 export default api;

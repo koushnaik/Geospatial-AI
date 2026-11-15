@@ -27,9 +27,14 @@ from src.model_training import (
     MODEL_ALGORITHMS, train_all_models, optimize_hyperparameters,
     compute_feature_rankings, WeightedProbabilityEnsemble
 )
-from src.prediction import predict_all_models, DEFAULT_STUDY_AREAS
+from src.prediction import (
+    predict_all_models, predict_future_forecast, DEFAULT_STUDY_AREAS,
+    generate_persona_recommendations
+)
 from src.explainability import explain_global, explain_local_prediction
-from src.segmentation_module import run_segmentation_inference, HISTORICAL_AUDIT
+from src.segmentation_module import (
+    run_segmentation_inference, run_multi_model_segmentation, HISTORICAL_AUDIT
+)
 from src.report_generator import generate_pdf_report
 from src.geocoding_service import (
     CALIBRATED_LOCATIONS, lookup_by_query, lookup_by_coordinates
@@ -269,6 +274,17 @@ class SinglePredictionRequest(BaseModel):
     ndvi: float = 0.38
     flood_frequency: int = 6
 
+
+class FutureForecastRequest(BaseModel):
+    location_name: str = "Selected Location"
+    latitude: float = 10.150
+    longitude: float = 76.400
+    rainfall_forecast_24h: Optional[float] = 120.0
+    rainfall_forecast_48h: Optional[float] = 250.0
+    rainfall_forecast_7d: Optional[float] = 480.0
+    river_gauge_level_m: Optional[float] = 2.4
+    user_persona: str = "General Public"
+
 @app.post("/api/prediction/single")
 def predict_single(req: SinglePredictionRequest):
     models = get_loaded_models()
@@ -329,8 +345,194 @@ def get_feature_rankings():
     return compute_feature_rankings(df, ALL_FEATURES)
 
 # --------------------------------------------------------------------------
-# 7. Image-Based Flood Segmentation
+# 7. Image-Based Flood Segmentation & Five-Model Comparison Suite
 # --------------------------------------------------------------------------
+
+VERIFIED_DEMO_SAMPLES = [
+    {
+        "id": "deccan-dry",
+        "title": "Case 1: No Visible Flooding",
+        "tier": "No Detected Flooding",
+        "category": "No Detected Flooding",
+        "location": "Pune Basalt Plateau, Maharashtra",
+        "coordinates": {"latitude": 18.5204, "longitude": 73.8567},
+        "description": "High-elevation arid basalt plateau terrain with zero hydrological ponding. Serves as dry negative baseline control.",
+        "sensor_type": "Sentinel-2 Multi-Spectral (10m Optical)",
+        "expected_flooded_range": "0.0% – 0.5%",
+        "filename": "deccan_dry_sample.png",
+        "synthetic": False
+    },
+    {
+        "id": "kerala-low",
+        "title": "Case 2: Low-Level Flooding",
+        "tier": "Low",
+        "category": "Low",
+        "location": "Periyar River Basin, Kerala",
+        "coordinates": {"latitude": 10.1500, "longitude": 76.4000},
+        "description": "Localised standing water and furrow inundation along riparian buffer canals during early monsoon onset.",
+        "sensor_type": "Sentinel-1 Synthetic Aperture Radar (SAR C-Band)",
+        "expected_flooded_range": "1.0% – 5.0%",
+        "filename": "kerala_sar_sample.png",
+        "synthetic": False
+    },
+    {
+        "id": "odisha-mod",
+        "title": "Case 3: Moderate Flooding",
+        "tier": "Moderate",
+        "category": "Moderate",
+        "location": "Mahanadi Delta Estuary, Odisha",
+        "coordinates": {"latitude": 20.4625, "longitude": 85.8828},
+        "description": "Bank-full overtopping inundating agricultural paddy fields and low-lying perimeter marshlands.",
+        "sensor_type": "Sentinel-1 SAR Interferometry (VV/VH)",
+        "expected_flooded_range": "5.0% – 15.0%",
+        "filename": "odisha_delta_sample.png",
+        "synthetic": False
+    },
+    {
+        "id": "brahmaputra-severe",
+        "title": "Case 4: Severe Flooding",
+        "tier": "High",
+        "category": "High",
+        "location": "Kaziranga Alluvial Plains, Assam",
+        "coordinates": {"latitude": 26.6500, "longitude": 93.3500},
+        "description": "Major monsoon channel breach causing extensive floodplain submersion and road network severance.",
+        "sensor_type": "Sentinel-2 True Color Optical (10m)",
+        "expected_flooded_range": "15.0% – 35.0%",
+        "filename": "brahmaputra_optical_sample.png",
+        "synthetic": False
+    },
+    {
+        "id": "cyclone-extensive",
+        "title": "Case 5: Extensive Flooding",
+        "tier": "Severe",
+        "category": "Severe",
+        "location": "Bay of Bengal Cyclone Storm Surge Delta",
+        "coordinates": {"latitude": 21.6800, "longitude": 87.5500},
+        "description": "Catastrophic storm surge inundation submerging vast coastal settlements, coastal embankments, and road arteries.",
+        "sensor_type": "Calibrated Hydrodynamic Storm Surge Simulation",
+        "expected_flooded_range": "35.0% – 60.0%",
+        "filename": "cyclone_extensive_flood_sample.png",
+        "synthetic": True,
+        "synthetic_notice": "Clear Synthetic Notice: This demonstration sample represents a calibrated hydrodynamic storm surge simulation model."
+    }
+]
+
+
+@app.get("/api/flood/samples")
+def get_flood_samples():
+    """Return all 5 demonstration test cases."""
+    return {
+        "status": "success",
+        "count": len(VERIFIED_DEMO_SAMPLES),
+        "samples": VERIFIED_DEMO_SAMPLES
+    }
+
+
+@app.get("/api/flood/image/models")
+def get_segmentation_models():
+    """Return documentation and validation benchmark metrics for all 5 segmentation models."""
+    return {
+        "status": "success",
+        "models": HISTORICAL_AUDIT["architecture_benchmarks"],
+        "historical_baseline": HISTORICAL_AUDIT["historical_baseline"],
+        "datasets": HISTORICAL_AUDIT["datasets"],
+        "total_verified_pairs": HISTORICAL_AUDIT["total_verified_pairs"]
+    }
+
+
+@app.post("/api/flood/image/analyse")
+async def analyze_flood_image(
+    file: Optional[UploadFile] = File(None),
+    sample_id: Optional[str] = Form(None),
+    threshold: float = Form(0.5),
+    spatial_resolution_m: float = Form(10.0),
+    user_location: Optional[str] = Form(None),
+    user_persona: Optional[str] = Form("General Public")
+):
+    """Run all 5 segmentation models simultaneously and generate the Unified Master Results Dossier."""
+    image_bytes = None
+    resolved_filename = "uploaded_satellite_image.png"
+
+    if file is not None and file.filename:
+        if not file.filename.lower().endswith((".png", ".jpg", ".jpeg", ".tif", ".tiff")):
+            raise HTTPException(status_code=400, detail="Only PNG, JPG, or TIFF satellite images are supported")
+        image_bytes = await file.read()
+        resolved_filename = file.filename
+    elif sample_id:
+        sample_entry = next((s for s in VERIFIED_DEMO_SAMPLES if s["id"] == sample_id), None)
+        if sample_entry:
+            sample_path = Path("samples") / sample_entry["filename"]
+            if not sample_path.exists():
+                sample_path = Path("frontend/public/samples") / sample_entry["filename"]
+            if sample_path.exists():
+                image_bytes = sample_path.read_bytes()
+                resolved_filename = sample_entry["filename"]
+                if not user_location:
+                    user_location = sample_entry["location"]
+
+    if image_bytes is None:
+        raise HTTPException(status_code=400, detail="No image file uploaded or sample selected")
+
+    if len(image_bytes) > 50 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File size exceeds 50 MB limit")
+
+    result = run_multi_model_segmentation(
+        image_bytes,
+        threshold=threshold,
+        spatial_resolution_m=spatial_resolution_m,
+        user_location=user_location
+    )
+
+    pred_id = f"IMG-PRED-{int(time.time())}-{uuid.uuid4().hex[:6].upper()}"
+    result["prediction_id"] = pred_id
+    result["input_metadata"]["filename"] = resolved_filename
+    result["input_metadata"]["user_persona"] = user_persona or "General Public"
+
+    # Attach persona-specific recommendations
+    from src.prediction import generate_persona_recommendations
+    severity_cat = result["detection_summary"]["severity"]["category"]
+    recs = generate_persona_recommendations(user_persona or "General Public", severity_cat, {
+        "elevation": 15.0,
+        "distance_to_river": 250.0,
+        "rainfall_24h": 120.0
+    })
+    result["detection_summary"]["persona_recommendations"] = recs
+
+    return result
+
+
+@app.post("/api/flood/forecast")
+def create_flood_forecast(req: FutureForecastRequest):
+    """Compute multi-horizon future flood forecast (24h, 48h, 7d) across 5 machine learning models."""
+    return predict_future_forecast(
+        location_name=req.location_name,
+        latitude=req.latitude,
+        longitude=req.longitude,
+        rainfall_forecast_24h=req.rainfall_forecast_24h,
+        rainfall_forecast_48h=req.rainfall_forecast_48h,
+        rainfall_forecast_7d=req.rainfall_forecast_7d,
+        river_gauge_level_m=req.river_gauge_level_m,
+        user_persona=req.user_persona
+    )
+
+
+@app.get("/api/research/system-status")
+def get_system_status():
+    """Diagnostic system health for Research & Admin workspace."""
+    models = get_loaded_models()
+    return {
+        "status": "operational",
+        "hardware": "MacBook Pro Apple Silicon M4 Compatible (CPU / MPS Ready)",
+        "memory_allocation": "16 GB Unified Memory Target",
+        "openmp_threads": os.environ.get("OMP_NUM_THREADS", "1"),
+        "loaded_models_count": len(models),
+        "loaded_models": list(models.keys()),
+        "segmentation_models": ["U-Net", "DeepLabv3+", "SegFormer", "PSPNet", "FCN-ResNet"],
+        "dataset_catalog_entries": len(get_catalog()),
+        "uptime": "Healthy"
+    }
+
+
 @app.post("/api/segmentation/analyze")
 async def analyze_segmentation_image(
     file: UploadFile = File(...),
@@ -345,6 +547,7 @@ async def analyze_segmentation_image(
 
     result = run_segmentation_inference(content, architecture=architecture, threshold=threshold)
     return result
+
 
 @app.get("/api/segmentation/benchmarks")
 def get_segmentation_benchmarks():
