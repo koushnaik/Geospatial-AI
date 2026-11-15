@@ -1,14 +1,33 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>GeoFlood AI</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2306B6D4'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0B1220" />
+    <meta name="description" content="GeoFlood AI: Historical Flood Susceptibility Analysis Using Geospatial Data Fusion and Machine Learning." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>GeoFlood AI — Geospatial Flood Intelligence & Analytics Platform</title>
+    <!-- Prevent Theme Flash during initial load -->
     <script>
-      // Single Page App redirect for GitHub Pages
-      sessionStorage.redirect = location.href;
+      (function() {
+        try {
+          var saved = localStorage.getItem('geoflood-theme');
+          var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
+          document.documentElement.classList.add(theme);
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'dark' ? '#0B1220' : '#F1F5F9');
+        } catch (e) {}
+      })();
     </script>
-    <meta http-equiv="refresh" content="0;URL='./'">
+    <script type="module" crossorigin src="/Geospatial-AI/assets/index-CzLCmryL.js"></script>
+    <link rel="stylesheet" crossorigin href="/Geospatial-AI/assets/index-sF6ReZGy.css">
   </head>
-  <body>
+  <body class="bg-navy-950 antialiased selection:bg-cyan-500/20 selection:text-cyan-300">
+    <div id="root"></div>
   </body>
 </html>
