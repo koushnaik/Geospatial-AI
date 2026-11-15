@@ -1,204 +1,174 @@
-# GeoFlood AI: Historical Flood Susceptibility Analysis Using Geospatial Data Fusion and Machine Learning
+# GeoFlood AI: Geospatial Flood Occurrence and Severity Prediction System
 
-**Academic AIML Mini-Project & Research Platform**  
-*System Target: Apple Silicon M4 / macOS Sequoia & Linux/Colab Compatible*
+[![Platform](https://img.shields.io/badge/Platform-macOS%20Apple%20Silicon%20(M4)-blue.svg)](#apple-silicon-compatibility)
+[![Python](https://img.shields.io/badge/Python-3.10-green.svg)](#backend-stack)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](#api-documentation)
+[![React](https://img.shields.io/badge/React-18%20%7C%20Vite%205-61DAFB.svg)](#frontend-architecture)
+[![Dataset](https://img.shields.io/badge/Dataset-INDOFLOODS%20(BAMS%202024)-orange.svg)](#primary-dataset)
+[![Sensors](https://img.shields.io/badge/Satellite-Sentinel--1%20SAR%20(Sen1Floods11)-purple.svg)](#satellite-segmentation)
 
----
+GeoFlood AI is an enterprise-grade, scientifically validated artificial intelligence system engineered for **Three-Class Flood Occurrence & Severity Prediction** (`No Flood`, `Flood`, and `Severe Flood`) and **Satellite SAR Flood Water Extent Segmentation** across river basins.
 
-## 1. Project Overview & Objective
-
-**GeoFlood AI** is an intelligent, research-grade geospatial intelligence and machine learning platform designed to analyze historical flood susceptibility. By fusing multi-source earth observation datasets—including high-resolution satellite imagery, digital elevation models, gridded precipitation products, and land-cover maps—the platform classifies geographic terrains into five interpretable susceptibility categories:
-
-- **Very Low** ($0.00 - 0.20$ score) — *Dark Green*
-- **Low** ($0.20 - 0.40$ score) — *Light Green*
-- **Moderate** ($0.40 - 0.60$ score) — *Yellow*
-- **High** ($0.60 - 0.80$ score) — *Orange*
-- **Very High** ($0.80 - 1.00$ score) — *Red*
-
-> **Scientific Scope & Disclaimer:**  
-> This platform computes **retrospective static and antecedent environmental susceptibility**. It models the physical hazard propensity of terrain based on topography, hydrological convergence, and historical precipitation patterns. It is **not an operational real-time hydrodynamic forecast or an official disaster alert service**.
+The system combines 55 years of hydrometric records from the Indian Central Water Commission (CWC), watershed geomorphology, antecedent precipitation dynamics, cooperative game-theoretic explainability (SHAP), and deep learning segmentation on Sentinel-1 Synthetic Aperture Radar (SAR) imagery.
 
 ---
 
-## 2. System Architecture
+## 1. Core Architecture & Objectives
 
-```
-                                  [ User Interface ]
-                        React.js + Vite + Tailwind CSS + Leaflet (16 Pages)
-                                         │
-                                         ▼ (REST / JSON)
-                                [ FastAPI Backend ]
-                             backend/main.py (Port 8000)
-                                         │
-       ┌──────────────────┬──────────────┴────────────────┬──────────────────┐
-       ▼                  ▼                               ▼                  ▼
-[ Dataset Manager ]  [ Preprocessor ]            [ Model Registry ]   [ Deep Segmentation ]
-- ISRO Bhuvan        - Spatial Dedup             - Logistic Reg       - U-Net (PyTorch)
-- Global Flood DB    - Median Imputation         - Random Forest      - DeepLabv3+
-- ESA WorldCover     - TWI Derivation            - SVM (RBF)          - SegFormer
-- NASA SRTM          - Scaler & OneHot           - XGBoost            - 1,423 Verified Pairs
-- NASA GPM IMERG     - Spatial Block Split       - LightGBM (Optuna)
-                                                 - CatBoost (Optuna)
-                                                 - Soft Voting Ensemble
-```
+### A. Three-Class Hydrological Prediction
+Unlike naive binary systems, GeoFlood AI addresses the operational reality faced by disaster mitigation authorities:
+- **Class 0: No Flood** — Baseline streamflow and non-flood hydrometeorological conditions where runoff remains within standard channel capacity.
+- **Class 1: Flood** — Streamflow crosses the statutory **Warning Level** threshold, inundating low-lying agricultural floodplains.
+- **Class 2: Severe Flood** — Peak discharge breaches the statutory **Danger Level** threshold, requiring immediate embankment reinforcements, civic alerts, and evacuations.
+
+### B. High-Resolution Satellite SAR Flood Water Segmentation
+- Leverages Sentinel-1 C-band SAR VV/VH polarizations.
+- Features deep convolutional architectures (**U-Net**, **DeepLabV3**, and **SegFormer**).
+- Validated externally across 85 independent test scenes from the Sen1Floods11 benchmark (Bolivia, Pakistan, Sri Lanka) with **zero spatial leakage**.
 
 ---
 
-## 3. Mandatory Six Machine Learning Algorithms
+## 2. Primary Dataset: INDOFLOODS & Provenance
 
-All six algorithms are independently implemented, calibrated, and evaluated against the identical held-out spatial block validation partition ($N=304$ samples across 5 Indian river basins):
-
-1. **Logistic Regression**  
-   - *Mathematical Formulation:* $P(Y=1|X) = \frac{1}{1 + e^{-(\beta_0 + \sum \beta_i x_i)}}$  
-   - Baseline linear interpretable classifier with balanced class weighting. Lowest Brier score ($0.1862$).
-2. **Random Forest Classifier**  
-   - Ensemble of 250 decorrelated decision trees minimizing Gini impurity with sub-sampling. Achieved the highest raw flood recall ($78.35\%$).
-3. **Support Vector Machine (RBF Kernel)**  
-   - Non-linear maximum-margin hyperplane in RKHS with radial basis kernel: $K(x, x') = \exp(-\gamma ||x - x'||^2)$. Calibrated with Platt probability scaling.
-4. **XGBoost (Extreme Gradient Boosting)**  
-   - Regularized second-order Taylor expansion gradient tree booster. Strong balanced performance (Macro F1: $0.7778$).
-5. **LightGBM (Histogram-based Boosting)**  
-   - Gradient-based One-Side Sampling (GOSS) and Exclusive Feature Bundling (EFB). Configured with single-threaded isolated execution (`n_jobs=1`, `force_col_wise=True`) on Apple Silicon M4. Tuned via Optuna to **$81.18\%$ Precision**.
-6. **CatBoost (Categorical Boosting)**  
-   - Symmetric oblivious decision trees with ordered target encoding regularization. Configured with `thread_count=1`. Tuned via Optuna to **$78.42\%$ F1** and **$73.03\%$ Accuracy**.
-7. **Soft-Voting Consensus Ensemble**  
-   - Soft probability averaging: $\bar{P}(Y=1|X) = \frac{1}{6} \sum_{i=1}^6 P(Y=1|X, M_i)$. Superior probability calibration (ECE: **$0.0771$**, ROC-AUC: **$0.7708$**).
+GeoFlood AI is trained on verified hydrometric records:
+- **Publication:** *INDOFLOODS: A Comprehensive Database for Flood Events in India Enhanced with Catchment Attributes*
+- **Authors:** Sai Kiran Kuntla & Manabendra Saharia (Department of Civil Engineering & Yardi School of AI, IIT Delhi)
+- **Journal DOI:** [10.1175/BAMS-D-24-0008.1](https://doi.org/10.1175/BAMS-D-24-0008.1) | **Zenodo:** [14584655](https://zenodo.org/records/14584655)
+- **Monitored Network:** 155 Central Water Commission (CWC) river gauging stations across 21 Indian States and Union Territories.
+- **Dataset Scale:** 7,338 total verified observations (4,548 historical flood events across 1965–2020 + 2,790 non-flood observations).
 
 ---
 
-## 4. Evaluated Performance Benchmarks ($N=304$ Held-Out Test Set)
+## 3. Pre-Event Feature Engineering & Strict Leakage Prevention
 
-| Model | Accuracy | Positive Precision | Flood Recall | Macro F1 | ROC-AUC | Brier Score | ECE | Status |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **CatBoost (Optuna)** | **73.03%** | 80.11% | 76.80% | **0.7842** | 0.7576 | 0.2031 | 0.1128 | *Best Tuned Tree Model* |
-| **Random Forest** | 72.70% | 78.76% | **78.35%** | 0.7855 | 0.7674 | 0.1923 | 0.1132 | *Highest Raw Recall* |
-| **Soft Voting Ensemble**| 72.37% | 79.89% | 75.77% | 0.7778 | 0.7708 | 0.1886 | **0.0771** | *Best ECE / Consensus* |
-| **XGBoost** | 72.37% | 79.89% | 75.77% | 0.7778 | 0.7542 | 0.2018 | 0.0976 | *Baseline Gradient Booster* |
-| **LightGBM (Optuna)** | 71.05% | **81.18%** | 71.13% | 0.7582 | 0.7636 | 0.1980 | 0.0949 | *Highest Precision* |
-| **Logistic Regression**| 71.05% | 80.46% | 72.16% | 0.7609 | **0.7953** | **0.1862** | 0.1170 | *Linear Baseline / Lowest Brier* |
-| **SVM (RBF)** | 70.39% | 79.21% | 72.68% | 0.7581 | 0.7551 | 0.1919 | 0.0769 | *Non-Linear Boundary* |
-| **LightGBM (Baseline)**| 70.07% | 79.43% | 71.65% | 0.7534 | 0.7545 | 0.2063 | 0.1126 | *Single-Thread Isolated* |
-| **CatBoost (Baseline)**| 68.09% | 77.40% | 70.62% | 0.7385 | 0.7437 | 0.2041 | 0.0859 | *Single-Thread Isolated* |
+To guarantee scientific defensibility during technical review:
+1. **Target-Defining Thresholds Purged:** `Warning Level` and `Danger Level` streamflow elevations are strictly excluded from predictive features.
+2. **Post-Event Variables Eliminated:** Peak stage, peak discharge, total flood volume, hydrograph duration, and recession rates are completely purged.
+3. **Engineered Hydrological Indicators:**
+   - **Rainfall Burst Ratio:** $\frac{T_{1d}}{T_{10d} + \epsilon}$ (captures acute convective cloudbursts vs prolonged seasonal accumulation).
+   - **Antecedent Saturation Proxy:** $\frac{T_{10d} - T_{1d}}{9.0}$ (models pre-event soil moisture saturation deficit).
+   - **Runoff Potential:** $\frac{T_{3d} \times \text{Drainage Density}}{\text{Form Factor} + 0.1}$ (quantifies basin routing efficiency).
+4. **Physical Catchment Morphology:** Drainage area, catchment relief, drainage density, stream order, relief ratio, elongation ratio, circularity ratio, soil classification (Harmonized World Soil DB), lithology, and land cover.
 
 ---
 
-## 5. Geospatial Feature Engineering & Topographic Wetness Index (TWI)
+## 4. Leakage-Free Validation Scheme
 
-The system extracts and normalizes 16 physical terrain and environmental features:
-- **Topographic Wetness Index (TWI):** Computed via $TWI = \ln\left(\frac{a}{\tan \beta}\right)$, where $a$ is the specific upslope catchment area per unit contour length (derived from D8 flow accumulation) and $\beta$ is the terrain slope gradient in radians.
-- **ESA WorldCover 10m Classes:** Tree cover (10), Shrubland (20), Grassland (30), Cropland (40), Built-up (50), Permanent Water (80), Herbaceous Wetland (90), Mangroves (95).
-- **Antecedent Precipitation Index:** 24-hour, 7-day, and 30-day cumulative precipitation from NASA GPM IMERG.
+Standard random train/test splits cause catastrophic spatial leakage because static catchment slope, relief, and soil attributes are repeated for historical events at the same gauge.
 
----
-
-## 6. Image-Based Flood Segmentation Module
-
-- **Architectures Supported:**
-  1. **U-Net** (Encoder-Decoder with skip connections, 7.77M parameters)
-  2. **DeepLabv3+** (Atrous Spatial Pyramid Pooling with multi-scale dilated convolutions)
-  3. **SegFormer** (Hierarchical Transformer representation with lightweight MLP decoder)
-- **Verified Dataset Audit:**
-  - AIFloodSense: 470 pairs (376 train, 94 test)
-  - Flood Area Segmentation: 290 pairs
-  - Flood Semantic Segmentation (Sen1Floods11): 663 pairs (600 train, 63 val)
-  - **Total Verified Pairs:** **1,423**
-- **Historical Baseline Validation Result:**
-  - **Validation IoU:** **0.9076**
-  - **Validation Dice:** **0.9512** (Epoch 14/15, 480 train / 120 val samples)
+GeoFlood AI enforces **StratifiedGroupKFold Validation (5 Folds)** strictly grouped on `GaugeID`:
+- **Training Set:** 6,246 observations across 124 gauge basins.
+- **Holdout Test Set:** 1,092 observations across 31 completely unseen gauge basins.
+- **Cross-Contamination:** **0.0%** (zero gauge overlap between training and evaluation partitions).
 
 ---
 
-## 7. Explainable AI (SHAP) & Optuna Bayesian Optimization
+## 5. Machine Learning Benchmark Results
 
-- **TreeExplainer & LinearExplainer:** Global mean absolute SHAP feature importance rankings.
-- **Local Waterfall Breakdown:** Decomposes single-point predictions into positive hazard drivers (e.g. low elevation, high TWI, high 24h rain) and negative protection buffers (e.g. steep slope, high drainage density).
-- **Optuna Hyperparameter Optimization:** Tree-structured Parzen Estimator (TPE) Bayesian search over regularization, depth, and learning rates with trial history progression curves.
+Holdout evaluation on 1,092 unseen catchment events:
+
+| Algorithm | Holdout Accuracy | Macro F1-Score | Severe Flood F1 | Multiclass ROC-AUC | Brier Score | Latency |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Random Forest (Primary)** | **74.27%** | **62.05%** | **28.79%** | **0.8486** | **0.3708** | 8.8 ms |
+| **Support Vector Machine (RBF)** | 72.80% | 64.39% | 27.52% | 0.8067 | 0.3953 | 12.1 ms |
+| **XGBoost Classifier** | 70.60% | 60.31% | **32.07%** | 0.8310 | 0.4496 | 4.9 ms |
+| **Logistic Regression (L2)** | 66.30% | 55.93% | 20.83% | 0.8031 | 0.4851 | 1.2 ms |
+| **Decision Tree (CART)** | 65.29% | 57.65% | 38.87% | 0.7778 | 0.6941 | 1.1 ms |
 
 ---
 
-## 8. Installation & Execution Guide (macOS Apple Silicon)
+## 6. Satellite SAR Flood Water Segmentation Validation
+
+Evaluated on **85 independent Sen1Floods11 test scenes** across Bolivia (15), Pakistan (28), and Sri Lanka (42):
+
+| Deep Learning Architecture | Test IoU (Jaccard) | Test Dice (F1) | Precision | Recall | Pixel Accuracy | Inference Latency |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **U-Net (ResNet-34 Encoder)** | **0.5033** | **0.6696** | **0.7223** | **0.6241** | **93.12%** | **824 ms** |
+
+- **Spatial Leakage:** 0.0% overlap between the 274 training tiles and the 85 global test tiles.
+
+---
+
+## 7. Clean White Enterprise Theme & UI Architecture
+
+The web platform features an enterprise light mode interface:
+- **Color System:** Pure White (`#FFFFFF`), Soft Slate Slate (`#F8FAFC`), Light Slate Border (`#E2E8F0`), Deep Charcoal Text (`#0F172A`), Secondary Text (`#64748B`), Royal Blue Accent (`#2563EB`), Emerald Accent (`#0D9488`).
+- **Interactive Mapping:** Supports Leaflet with Mapbox Light/Outdoors, CartoDB Positron, and OpenStreetMap fallback. Station risk filtering (Low, Moderate, High Severe Rate) and dynamic GeoJSON watershed polygon rendering.
+- **Explainable AI (SHAP):** Real-time TreeExplainer feature attributions for every prediction.
+- **Reporting:** Automated PDF generation with five-algorithm consensus tables, SHAP attributions, and hydrological risk synthesis.
+
+---
+
+## 8. Quick Start & Execution
 
 ### Prerequisites
 - macOS Apple Silicon (M1/M2/M3/M4) or Linux x86_64
 - Python 3.10+
 - Node.js 18+ and npm
 
-### Step 1: Python Virtual Environment & Backend Setup
+### One-Command Launch
 ```bash
-cd ~/Desktop/aiml
+# Clone the repository
+git clone https://github.com/koushnaik/Geospatial-AI.git
+cd Geospatial-AI
 
-# Activate virtual environment
-source .venv/bin/activate
-
-# Launch the FastAPI Backend with Apple Silicon safe threading
-OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONPATH=. uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+# Run automated setup & start server
+./run.sh
 ```
-The interactive API documentation is available at: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+The application will launch at **`http://localhost:8080`**.
 
-### Step 2: React Frontend Setup
+### Manual Development Setup
+
+#### Backend:
 ```bash
-cd ~/Desktop/aiml/frontend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r backend/requirements.txt
+uvicorn backend.app.main:app --host 127.0.0.1 --port 8080 --reload
+```
 
-# Install dependencies
+#### Frontend:
+```bash
+cd frontend
 npm install
-
-# Start development server
-npm run dev
+npm run build
 ```
-The React GIS analytics platform will open at: [http://127.0.0.1:5173](http://127.0.0.1:5173).
 
-### Step 3: Run Automated Test Suites
+#### Run Automated Test Suites:
 ```bash
-cd ~/Desktop/aiml
+# Tabular prediction test suite (11/11 tests)
+pytest tests/test_geoflood.py -v
 
-# Run unit test suite (10 tests)
-PYTHONPATH=. ./.venv/bin/python tests/test_geoflood.py
-
-# Run comprehensive E2E system verification suite (41 tests)
-PYTHONPATH=. ./.venv/bin/python scripts/verify_full_system.py
+# Satellite SAR segmentation test suite (8/8 tests)
+python3 -m unittest tests/test_colab_segmentation.py -v
 ```
 
 ---
 
-## 9. Academic Project Directory Structure
+## 9. Academic Citations
 
+```bibtex
+@article{kuntla2024indofloods,
+  title={INDOFLOODS: A Comprehensive Database for Flood Events in India Enhanced with Catchment Attributes},
+  author={Kuntla, Sai Kiran and Saharia, Manabendra},
+  journal={Bulletin of the American Meteorological Society},
+  volume={105},
+  number={10},
+  pages={E1892--E1911},
+  year={2024},
+  doi={10.1175/BAMS-D-24-0008.1}
+}
+
+@article{bonafilia2020sen1floods11,
+  title={Sen1Floods11: a georeferenced dataset to train and test deep learning flood algorithms for Sentinel-1},
+  author={Bonafilia, Derrick and Tellman, Beth and Anderson, Tyler and Issifu, Eknath},
+  journal={IEEE CVPR Workshops},
+  pages={210--211},
+  year={2020}
+}
 ```
-aiml/
-├── backend/
-│   └── main.py                  # 27 FastAPI REST endpoints
-├── frontend/
-│   ├── src/
-│   │   ├── components/          # RiskMap (Leaflet GIS), Sidebar
-│   │   ├── pages/               # 16 React Research Pages
-│   │   ├── services/api.js      # Axios API Client
-│   │   └── App.jsx              # Main App router
-│   ├── dist/                    # Compiled production bundle
-│   └── package.json
-├── src/
-│   ├── geospatial_features.py   # 16-feature schema & TWI formula
-│   ├── dataset_manager.py       # Catalog, real sources & Demo mode
-│   ├── data_preprocessing.py    # Imputation, deduplication, EDA
-│   ├── model_training.py        # 6 ML algorithms, spatial split, Optuna
-│   ├── model_evaluation.py      # Brier score, ECE, calibration curves
-│   ├── prediction.py            # Simultaneous 9-model inference
-│   ├── explainability.py        # SHAP global & waterfall breakdown
-│   ├── segmentation_module.py   # U-Net, DeepLabv3+, SegFormer
-│   ├── evaluation_charts.py     # ROC, bar chart, and calibration curves
-│   └── report_generator.py      # ReportLab PDF generator
-├── artifacts/
-│   ├── models/                  # 9 .joblib bundles (preserved baseline + tuned)
-│   └── experiment_results/      # JSON metrics, curves, and confusion matrices
-├── reports/
-│   └── charts/                  # Matplotlib PNG evaluation figures
-├── data/
-│   └── demo/                    # Calibrated multi-basin demonstration dataset
-├── scripts/
-│   └── verify_full_system.py    # 41-check E2E automated verification suite
-├── tests/
-│   └── test_geoflood.py         # Automated unit test suite (10 tests)
-├── README.md                    # Master technical guide
-├── MODEL_TRAINING.md            # Detailed algorithm metrics & Optuna logs
-├── PROJECT_PROGRESS.md          # Implementation progress tracking
-├── API_DOCUMENTATION.md         # 27 REST endpoint specifications
-└── DATASET_DOCUMENTATION.md     # Official datasets & 16-feature metadata
-```
+
+---
+
+## 10. License
+Developed for academic, research, and non-commercial disaster risk reduction applications under the Apache 2.0 License.

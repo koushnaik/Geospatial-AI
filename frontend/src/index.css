@@ -1,185 +1,56 @@
-@import 'leaflet/dist/leaflet.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root,
-  :root.dark,
-  :root[data-theme="dark"],
-  .dark,
-  [data-theme="dark"] {
-    color-scheme: dark;
-    --color-navy-950: 11 18 32;       /* #0B1220 Deep navy canvas background */
-    --color-navy-900: 17 28 46;       /* #111C2E Elevated panel background */
-    --color-navy-850: 21 35 58;       /* #15233A Secondary panel / card hover */
-    --color-navy-800: 30 45 68;       /* #1E2D44 Borders & dividers */
-    --color-navy-750: 36 52 78;       /* #24344E Sub-panel highlight */
-    --color-navy-700: 42 60 88;       /* #2A3C58 Muted borders & active pills */
-    --color-navy-600: 61 84 119;      /* #3D5477 Outline & subtle rings */
-
-    --color-cyan-950: 8 51 68;        /* #083344 Dark cyan badge background */
-    --color-cyan-900: 22 78 99;       /* #164E63 Dark cyan surface */
-    --color-cyan-800: 21 94 117;      /* #155E75 Dark cyan border */
-
-    --shadow-panel: 0 4px 20px -2px rgba(3, 7, 18, 0.4), 0 2px 6px -2px rgba(3, 7, 18, 0.3);
-    --shadow-glow-cyan: 0 0 20px -3px rgba(6, 182, 212, 0.35);
-    --shadow-glow-teal: 0 0 20px -3px rgba(20, 184, 166, 0.35);
-
-    --scrollbar-track: #0B1220;
-    --scrollbar-thumb: #1E2D44;
-    --scrollbar-thumb-hover: #06B6D4;
-  }
-
-  :root.light,
-  :root[data-theme="light"],
-  .light,
-  [data-theme="light"] {
-    color-scheme: light;
-    --color-navy-950: 241 245 249;    /* #F1F5F9 Clean slate-100 canvas background */
-    --color-navy-900: 255 255 255;    /* #FFFFFF Pure white elevated cards & panels */
-    --color-navy-850: 248 250 252;    /* #F8FAFC Slate-50 inner card / hover surface */
-    --color-navy-800: 226 232 240;    /* #E2E8F0 Clean slate-200 border & neutral badges */
-    --color-navy-750: 235 240 246;    /* #EBF0F6 Sub-panel border */
-    --color-navy-700: 203 213 225;    /* #CBD5E1 Slate-300 secondary border */
-    --color-navy-600: 148 163 184;    /* #94A3B8 Slate-400 outline & rings */
-
-    --color-cyan-950: 236 254 255;    /* #ECFEFF Light cyan badge background */
-    --color-cyan-900: 224 242 254;    /* #E0F2FE Light cyan surface */
-    --color-cyan-800: 186 230 253;    /* #BAE6FD Light cyan border */
-
-    --shadow-panel: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-    --shadow-glow-cyan: 0 0 15px -3px rgba(8, 145, 178, 0.22);
-    --shadow-glow-teal: 0 0 15px -3px rgba(13, 148, 136, 0.22);
-
-    --scrollbar-track: #F1F5F9;
-    --scrollbar-thumb: #CBD5E1;
-    --scrollbar-thumb-hover: #0891B2;
-  }
-
   body {
-    background-color: rgb(var(--color-navy-950));
-    color: #F8FAFC;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh;
-    overflow-x: hidden;
   }
-
-  :root.light body,
-  :root[data-theme="light"] body,
-  .light body,
-  [data-theme="light"] body {
-    color: #0F172A;
+  code, pre {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 }
 
-/* Light Mode Typography & Form Contrast Refinements */
-.light .text-white:not([class*="bg-cyan-6"]):not([class*="bg-cyan-5"]):not([class*="bg-teal-6"]):not([class*="bg-teal-5"]):not([class*="bg-emerald-6"]):not([class*="bg-emerald-5"]):not([class*="bg-rose-6"]):not([class*="bg-red-6"]):not([class*="bg-gradient"]):not([class*="bg-blue-6"]),
-[data-theme="light"] .text-white:not([class*="bg-cyan-6"]):not([class*="bg-cyan-5"]):not([class*="bg-teal-6"]):not([class*="bg-teal-5"]):not([class*="bg-emerald-6"]):not([class*="bg-emerald-5"]):not([class*="bg-rose-6"]):not([class*="bg-red-6"]):not([class*="bg-gradient"]):not([class*="bg-blue-6"]) {
-  color: #0F172A !important;
-}
-
-.light .text-slate-100, [data-theme="light"] .text-slate-100 { color: #0F172A !important; }
-.light .text-slate-200, [data-theme="light"] .text-slate-200 { color: #1E293B !important; }
-.light .text-slate-300, [data-theme="light"] .text-slate-300 { color: #334155 !important; }
-.light .text-slate-400, [data-theme="light"] .text-slate-400 { color: #475569 !important; }
-.light .text-slate-500, [data-theme="light"] .text-slate-500 { color: #64748B !important; }
-
-/* Ensure high-contrast accent readability on light backgrounds */
-.light .text-cyan-400, [data-theme="light"] .text-cyan-400 { color: #0891B2 !important; }
-.light .text-cyan-300, [data-theme="light"] .text-cyan-300 { color: #0E7490 !important; }
-.light .text-emerald-400, [data-theme="light"] .text-emerald-400 { color: #059669 !important; }
-.light .text-amber-400, [data-theme="light"] .text-amber-400 { color: #D97706 !important; }
-.light .text-amber-300, [data-theme="light"] .text-amber-300 { color: #B45309 !important; }
-.light .text-teal-400, [data-theme="light"] .text-teal-400 { color: #0D9488 !important; }
-.light .text-purple-400, [data-theme="light"] .text-purple-400 { color: #7C3AED !important; }
-.light .text-navy-950, [data-theme="light"] .text-navy-950 { color: #0B1220 !important; }
-
-/* Form inputs & select options in light mode */
-.light select option,
-[data-theme="light"] select option {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-}
-
-.light input,
-.light select,
-.light textarea,
-[data-theme="light"] input,
-[data-theme="light"] select,
-[data-theme="light"] textarea {
-  color: #0F172A !important;
-}
-
-.light input::placeholder,
-.light textarea::placeholder,
-[data-theme="light"] input::placeholder,
-[data-theme="light"] textarea::placeholder {
-  color: #94A3B8 !important;
-}
-
-/* Custom Scrollbar */
+/* Custom Scrollbar - Clean Light Theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
+  background: #f1f5f9;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
+  background: #cbd5e1;
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
+  background: #94a3b8;
 }
 
-/* Leaflet Themed Map Tiles & Overrides */
+/* Leaflet Map overrides for Light Theme */
 .leaflet-container {
-  font-family: inherit !important;
-  background-color: rgb(var(--color-navy-950)) !important;
+  width: 100%;
+  height: 100%;
+  background: #f8fafc !important;
   border-radius: 0.75rem;
+  font-family: inherit;
 }
-
 .leaflet-popup-content-wrapper {
-  background: rgb(var(--color-navy-900)) !important;
-  color: inherit !important;
-  border: 1px solid rgb(var(--color-navy-800)) !important;
-  border-radius: 0.5rem !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25) !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  padding: 0;
 }
-
+.leaflet-popup-content {
+  margin: 12px 14px;
+  line-height: 1.4;
+}
 .leaflet-popup-tip {
-  background: rgb(var(--color-navy-900)) !important;
-  border: 1px solid rgb(var(--color-navy-800)) !important;
-}
-
-.light .leaflet-popup-content-wrapper {
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12) !important;
-}
-
-/* Pulse animation for high risk markers */
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-  }
-}
-
-.pulse-risk {
-  animation: pulse-ring 2s infinite;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0;
 }

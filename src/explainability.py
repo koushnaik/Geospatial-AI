@@ -14,6 +14,25 @@ import pandas as pd
 import shap
 from .geospatial_features import ALL_FEATURES
 
+# Patch SHAP UBJSON parser for XGBoost 3.x compatibility where base_score is serialized as '[5.7589E-1]'
+try:
+    import shap.explainers._tree as _tree_mod
+    _orig_decode_ubjson = _tree_mod.decode_ubjson_buffer
+
+    def _patched_decode_ubjson(fd):
+        res = _orig_decode_ubjson(fd)
+        try:
+            lmp = res.get("learner", {}).get("learner_model_param", {})
+            if "base_score" in lmp and isinstance(lmp["base_score"], str):
+                lmp["base_score"] = lmp["base_score"].strip("[]")
+        except Exception:
+            pass
+        return res
+
+    _tree_mod.decode_ubjson_buffer = _patched_decode_ubjson
+except Exception:
+    pass
+
 
 def explain_global(pipeline: Any, X_sample: pd.DataFrame, max_samples: int = 150) -> Dict[str, Any]:
     """Compute global SHAP values across representative validation samples."""
@@ -128,6 +147,7 @@ def explain_local_prediction(pipeline: Any, input_row: Any) -> Dict[str, Any]:
             item = {
                 "feature": name,
                 "shap_value": round(effect, 4),
+                "impact": round(abs(effect), 4),
                 "direction": "Risk Increasing (+)" if effect > 0 else "Risk Decreasing (-)",
                 "abs_impact": round(abs(effect), 4)
             }
@@ -167,6 +187,7 @@ def explain_local_prediction(pipeline: Any, input_row: Any) -> Dict[str, Any]:
         return {
             "status": "success",
             "base_value": round(base_val, 4),
+            "prediction_value": round(base_val + float(np.sum(shap_vals)), 4),
             "waterfall": waterfall[:10],
             "positive_contributions": positive_factors[:6],
             "negative_contributions": negative_factors[:6],

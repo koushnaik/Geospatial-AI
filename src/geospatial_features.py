@@ -66,11 +66,13 @@ def calculate_twi(flow_accumulation: float | np.ndarray, slope_degrees: float | 
 def classify_susceptibility(probability: float) -> Dict[str, Any]:
     """Map probability [0, 1] to one of the five susceptibility categories."""
     p = float(np.clip(probability, 0.0, 1.0))
-    for cat in SUSCEPTIBILITY_CATEGORIES:
+    for idx, cat in enumerate(SUSCEPTIBILITY_CATEGORIES, 1):
         if cat["min"] <= p < cat["max"]:
             return {
                 "category": cat["name"],
+                "tier": idx,
                 "score": round(p, 4),
+                "susceptibility_percentage": round(p * 100, 2),
                 "color": cat["color"],
                 "hex": cat["hex"],
                 "description": f"{cat['name']} susceptibility to historical flood conditions based on environmental and terrain covariates."
@@ -78,7 +80,9 @@ def classify_susceptibility(probability: float) -> Dict[str, Any]:
     last = SUSCEPTIBILITY_CATEGORIES[-1]
     return {
         "category": last["name"],
+        "tier": len(SUSCEPTIBILITY_CATEGORIES),
         "score": round(p, 4),
+        "susceptibility_percentage": round(p * 100, 2),
         "color": last["color"],
         "hex": last["hex"],
         "description": f"{last['name']} susceptibility to historical flood conditions based on environmental and terrain covariates."

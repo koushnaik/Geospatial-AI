@@ -1,0 +1,141 @@
+{
+  "dataset_name": "INDOFLOODS",
+  "description": "A Comprehensive Database for Flood Events in India Enhanced with Catchment Attributes",
+  "raw_sizes": {
+    "floodevents": {
+      "rows": 4548,
+      "cols": 13
+    },
+    "precipitation": {
+      "rows": 4548,
+      "cols": 11
+    },
+    "metadata": {
+      "rows": 214,
+      "cols": 18
+    },
+    "catchment_characteristics": {
+      "rows": 155,
+      "cols": 108
+    }
+  },
+  "final_merged_shape": {
+    "events": 4548,
+    "columns": 142,
+    "unique_gauges": 155
+  },
+  "joins": {
+    "floods_to_precip": {
+      "attempted": 4548,
+      "matched": 4548,
+      "lost": 0
+    },
+    "events_to_metadata": {
+      "attempted": 4548,
+      "matched": 4548,
+      "lost": 0
+    },
+    "events_to_catchment": {
+      "attempted": 4548,
+      "matched": 4548,
+      "lost": 0
+    }
+  },
+  "target_distribution": {
+    "Flood": 2919,
+    "Severe Flood": 1629,
+    "Flood_pct": 64.18,
+    "Severe_Flood_pct": 35.82
+  },
+  "features": {
+    "total_selected": 28,
+    "numeric_count": 24,
+    "categorical_count": 4,
+    "numeric_list": [
+      "T1d",
+      "T2d",
+      "T3d",
+      "T4d",
+      "T5d",
+      "T6d",
+      "T7d",
+      "T8d",
+      "T9d",
+      "T10d",
+      "Drainage Area",
+      "Catchment Relief",
+      "Catchment Length",
+      "Catchment Perimeter",
+      "Drainage Density",
+      "Stream Order",
+      "Sinuosity Index",
+      "Form Factor",
+      "Relief Ratio",
+      "Elongation Ratio",
+      "Circularity Ratio",
+      "Annual Precipitation",
+      "Precipitation Seasonality",
+      "Annual Mean Temperature"
+    ],
+    "categorical_list": [
+      "Soil type",
+      "Land cover",
+      "lithology type",
+      "KoppenGeiger Climate Type"
+    ],
+    "feature_units": {
+      "T1d": "mm (1-day accumulated rainfall)",
+      "T2d": "mm (2-day accumulated rainfall)",
+      "T3d": "mm (3-day accumulated rainfall)",
+      "T4d": "mm (4-day accumulated rainfall)",
+      "T5d": "mm (5-day accumulated rainfall)",
+      "T6d": "mm (6-day accumulated rainfall)",
+      "T7d": "mm (7-day accumulated rainfall)",
+      "T8d": "mm (8-day accumulated rainfall)",
+      "T9d": "mm (9-day accumulated rainfall)",
+      "T10d": "mm (10-day accumulated rainfall)",
+      "Drainage Area": "km\u00b2 (catchment drainage area)",
+      "Catchment Relief": "m (elevation difference divide to outlet)",
+      "Catchment Length": "km (maximal flow path length)",
+      "Catchment Perimeter": "km (catchment boundary perimeter)",
+      "Drainage Density": "km/km\u00b2 (stream length per unit area)",
+      "Stream Order": "Strahler order (network branching)",
+      "Sinuosity Index": "dimensionless ratio (MFL/DVL)",
+      "Form Factor": "dimensionless ratio (DA/CL\u00b2)",
+      "Relief Ratio": "dimensionless ratio (CR/CL)",
+      "Elongation Ratio": "dimensionless ratio",
+      "Circularity Ratio": "dimensionless ratio",
+      "Annual Precipitation": "mm/year (mean annual precipitation)",
+      "Precipitation Seasonality": "coefficient of variation (%)",
+      "Annual Mean Temperature": "\u00b0C (mean annual temperature)",
+      "Soil type": "FAO soil classification class",
+      "Land cover": "dominant land cover category",
+      "lithology type": "dominant rock / lithology category",
+      "KoppenGeiger Climate Type": "climate zone classification"
+    },
+    "leakage_excluded_variables": [
+      "Warning Level",
+      "Danger Level",
+      "Peak Flood Level (m)",
+      "Peak FL Date",
+      "Num Peak FL",
+      "Peak Discharge Q (cumec)",
+      "Peak Discharge Date",
+      "Flood Volume (cumec)",
+      "Event Duration (days)",
+      "Time to Peak (days)",
+      "Recession Time (day)",
+      "Flood Type",
+      "target"
+    ]
+  },
+  "data_quality_observations": [
+    "All 4,548 flood events matched 1-to-1 with precipitation variables using EventID (0 records lost).",
+    "Extracted GaugeID accurately matched across metadata (214 total gauges) and catchment characteristics (155 gauges).",
+    "All 24 numerical features and 4 categorical features have 0% missing values across all 4,548 event records.",
+    "Higher order stream attributes (7th/8th order) were excluded due to >99% structural non-applicability.",
+    "Post-event hydrologic metrics (Peak Flood Level, Peak Discharge, Flood Volume, Duration, Recession Time) strictly excluded to prevent data leakage.",
+    "Warning Level and Danger Level streamflow thresholds excluded because they define the target classification boundary.",
+    "Basin and State names standardized to remove typos and multi-spelling variants."
+  ]
+}
