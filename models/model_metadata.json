@@ -1,0 +1,368 @@
+{
+  "timestamp": "2026-11-15 21:29:13",
+  "best_model": "Random Forest",
+  "selection_criterion": "Highest Macro F1-score & Multi-Class ROC-AUC on unseen gauge-holdout test set.",
+  "classes": {
+    "0": "No Flood",
+    "1": "Flood",
+    "2": "Severe Flood"
+  },
+  "dataset_split": {
+    "total_samples": 7338,
+    "train_events": 6246,
+    "train_gauges": 124,
+    "test_events": 1092,
+    "test_gauges": 31,
+    "validation_strategy": "StratifiedGroupKFold (groups=GaugeID)"
+  },
+  "features": {
+    "raw_numeric": [
+      "T1d",
+      "T2d",
+      "T3d",
+      "T4d",
+      "T5d",
+      "T6d",
+      "T7d",
+      "T8d",
+      "T9d",
+      "T10d",
+      "Rainfall_Burst_Ratio",
+      "Antecedent_Saturation_Proxy",
+      "Runoff_Potential",
+      "Drainage Area",
+      "Catchment Relief",
+      "Catchment Length",
+      "Catchment Perimeter",
+      "Drainage Density",
+      "Stream Order",
+      "Sinuosity Index",
+      "Form Factor",
+      "Relief Ratio",
+      "Elongation Ratio",
+      "Circularity Ratio",
+      "Annual Precipitation",
+      "Precipitation Seasonality",
+      "Annual Mean Temperature"
+    ],
+    "raw_categorical": [
+      "Soil type",
+      "Land cover",
+      "lithology type",
+      "KoppenGeiger Climate Type"
+    ],
+    "processed_feature_names": [
+      "T1d",
+      "T2d",
+      "T3d",
+      "T4d",
+      "T5d",
+      "T6d",
+      "T7d",
+      "T8d",
+      "T9d",
+      "T10d",
+      "Rainfall_Burst_Ratio",
+      "Antecedent_Saturation_Proxy",
+      "Runoff_Potential",
+      "Drainage Area",
+      "Catchment Relief",
+      "Catchment Length",
+      "Catchment Perimeter",
+      "Drainage Density",
+      "Stream Order",
+      "Sinuosity Index",
+      "Form Factor",
+      "Relief Ratio",
+      "Elongation Ratio",
+      "Circularity Ratio",
+      "Annual Precipitation",
+      "Precipitation Seasonality",
+      "Annual Mean Temperature",
+      "Soil type_Acrisols",
+      "Soil type_Cambisols",
+      "Soil type_Fluvisols",
+      "Soil type_Leptosols",
+      "Soil type_Lixisols",
+      "Soil type_Luvisols",
+      "Soil type_No dominant class",
+      "Soil type_Vertisols",
+      "Land cover_Cropland",
+      "Land cover_Forest",
+      "Land cover_Mosaic vegetation",
+      "Land cover_No dominant class",
+      "lithology type_Acid plutonic rocks",
+      "lithology type_Basic volcanic rocks",
+      "lithology type_Metamorphics",
+      "lithology type_No dominant class",
+      "lithology type_Siliciclastic sedimentary rocks",
+      "lithology type_Unconsolidated sediments",
+      "KoppenGeiger Climate Type_Arid",
+      "KoppenGeiger Climate Type_No dominant class",
+      "KoppenGeiger Climate Type_Temperate",
+      "KoppenGeiger Climate Type_Tropical"
+    ],
+    "total_processed": 49
+  },
+  "evaluation_metrics": {
+    "Logistic Regression": {
+      "accuracy": 0.663,
+      "precision_macro": 0.5603,
+      "recall_macro": 0.5594,
+      "f1_macro": 0.5593,
+      "f1_weighted": 0.6576,
+      "f1_noflood": 0.8314,
+      "f1_flood": 0.5798,
+      "f1_severe": 0.2667,
+      "roc_auc": 0.8031,
+      "brier_score": 0.4403,
+      "training_time_sec": 0.012,
+      "prediction_latency_ms": 0.0,
+      "cv_metrics": {
+        "cv_accuracy_mean": 0.5665729440900091,
+        "cv_accuracy_std": 0.050248874949031345,
+        "cv_macro_f1_mean": 0.4993430395633296,
+        "cv_macro_f1_std": 0.03236897079672291,
+        "cv_roc_auc_mean": 0.7624291728523522,
+        "cv_roc_auc_std": 0.0152246904824252
+      }
+    },
+    "Random Forest": {
+      "accuracy": 0.7427,
+      "precision_macro": 0.6514,
+      "recall_macro": 0.6208,
+      "f1_macro": 0.6205,
+      "f1_weighted": 0.7192,
+      "f1_noflood": 0.8557,
+      "f1_flood": 0.7213,
+      "f1_severe": 0.2846,
+      "roc_auc": 0.8486,
+      "brier_score": 0.3708,
+      "training_time_sec": 0.325,
+      "prediction_latency_ms": 0.024,
+      "cv_metrics": {
+        "cv_accuracy_mean": 0.6038068159175842,
+        "cv_accuracy_std": 0.05725382738940952,
+        "cv_macro_f1_mean": 0.5490801017799725,
+        "cv_macro_f1_std": 0.04056396549260536,
+        "cv_roc_auc_mean": 0.8110191119411256,
+        "cv_roc_auc_std": 0.028222290365995217
+      }
+    },
+    "Decision Tree": {
+      "accuracy": 0.6529,
+      "precision_macro": 0.5813,
+      "recall_macro": 0.5805,
+      "f1_macro": 0.5765,
+      "f1_weighted": 0.65,
+      "f1_noflood": 0.8076,
+      "f1_flood": 0.5331,
+      "f1_severe": 0.3887,
+      "roc_auc": 0.7778,
+      "brier_score": 0.4909,
+      "training_time_sec": 0.043,
+      "prediction_latency_ms": 0.0,
+      "cv_metrics": {
+        "cv_accuracy_mean": 0.5779170837091581,
+        "cv_accuracy_std": 0.04946741963341869,
+        "cv_macro_f1_mean": 0.5326114255636545,
+        "cv_macro_f1_std": 0.04602446970936235,
+        "cv_roc_auc_mean": 0.7555160257113936,
+        "cv_roc_auc_std": 0.04101677496422114
+      }
+    },
+    "Support Vector Machine": {
+      "accuracy": 0.728,
+      "precision_macro": 0.6509,
+      "recall_macro": 0.6394,
+      "f1_macro": 0.6439,
+      "f1_weighted": 0.7225,
+      "f1_noflood": 0.8279,
+      "f1_flood": 0.7315,
+      "f1_severe": 0.3724,
+      "roc_auc": 0.8067,
+      "brier_score": 0.3953,
+      "training_time_sec": 2.252,
+      "prediction_latency_ms": 0.111,
+      "cv_metrics": {
+        "cv_accuracy_mean": 0.5630078775474354,
+        "cv_accuracy_std": 0.05844290384610014,
+        "cv_macro_f1_mean": 0.5186063314538363,
+        "cv_macro_f1_std": 0.050502864454787126,
+        "cv_roc_auc_mean": 0.7652846019265933,
+        "cv_roc_auc_std": 0.03120456273847343
+      }
+    },
+    "XGBoost": {
+      "accuracy": 0.706,
+      "precision_macro": 0.6137,
+      "recall_macro": 0.5999,
+      "f1_macro": 0.6031,
+      "f1_weighted": 0.6963,
+      "f1_noflood": 0.8569,
+      "f1_flood": 0.6316,
+      "f1_severe": 0.3207,
+      "roc_auc": 0.831,
+      "brier_score": 0.4019,
+      "training_time_sec": 0.653,
+      "prediction_latency_ms": 0.001,
+      "cv_metrics": {
+        "cv_accuracy_mean": 0.6024916767344972,
+        "cv_accuracy_std": 0.043423650394635284,
+        "cv_macro_f1_mean": 0.5504199078046796,
+        "cv_macro_f1_std": 0.04635480130364605,
+        "cv_roc_auc_mean": 0.8059909761367161,
+        "cv_roc_auc_std": 0.021435615240259047
+      }
+    }
+  },
+  "confusion_matrices": {
+    "Logistic Regression": [
+      [
+        471,
+        73,
+        14
+      ],
+      [
+        53,
+        209,
+        95
+      ],
+      [
+        51,
+        82,
+        44
+      ]
+    ],
+    "Random Forest": [
+      [
+        510,
+        40,
+        8
+      ],
+      [
+        55,
+        264,
+        38
+      ],
+      [
+        69,
+        71,
+        37
+      ]
+    ],
+    "Decision Tree": [
+      [
+        468,
+        60,
+        30
+      ],
+      [
+        80,
+        169,
+        108
+      ],
+      [
+        53,
+        48,
+        76
+      ]
+    ],
+    "Support Vector Machine": [
+      [
+        481,
+        29,
+        48
+      ],
+      [
+        59,
+        252,
+        46
+      ],
+      [
+        64,
+        51,
+        62
+      ]
+    ],
+    "XGBoost": [
+      [
+        512,
+        30,
+        16
+      ],
+      [
+        58,
+        204,
+        95
+      ],
+      [
+        67,
+        55,
+        55
+      ]
+    ]
+  },
+  "global_shap_importance": [
+    {
+      "feature": "T1d",
+      "importance": 0.0415
+    },
+    {
+      "feature": "T2d",
+      "importance": 0.0356
+    },
+    {
+      "feature": "Rainfall_Burst_Ratio",
+      "importance": 0.027
+    },
+    {
+      "feature": "T3d",
+      "importance": 0.0223
+    },
+    {
+      "feature": "Runoff_Potential",
+      "importance": 0.022
+    },
+    {
+      "feature": "Relief Ratio",
+      "importance": 0.0181
+    },
+    {
+      "feature": "Annual Precipitation",
+      "importance": 0.0158
+    },
+    {
+      "feature": "Catchment Relief",
+      "importance": 0.0136
+    },
+    {
+      "feature": "Precipitation Seasonality",
+      "importance": 0.0135
+    },
+    {
+      "feature": "T4d",
+      "importance": 0.0128
+    },
+    {
+      "feature": "Elongation Ratio",
+      "importance": 0.0127
+    },
+    {
+      "feature": "T7d",
+      "importance": 0.0112
+    },
+    {
+      "feature": "Catchment Perimeter",
+      "importance": 0.0109
+    },
+    {
+      "feature": "T8d",
+      "importance": 0.0107
+    },
+    {
+      "feature": "Drainage Area",
+      "importance": 0.0106
+    }
+  ]
+}

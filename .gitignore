@@ -1,0 +1,63 @@
+# ==============================================================================
+# GeoFlood AI — Git Ignore Rules
+# ==============================================================================
+
+# Python Virtual Environments & Packages
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+.pytest_cache/
+
+# Node & Frontend Dependencies
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.*
+*.env
+*.env.*
+*.local
+frontend/.env*
+frontend/src/.env*
+*.pem
+*.key
+
+# Preserve template examples
+!.env.example
+!frontend/.env.example
+
+# Backups & Scratch
+*_backup*/
+*.bak
+experiments/
+
+# OS-generated files
+.DS_Store
+*/.DS_Store
+*/*/.DS_Store
+*/*/*/.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Local Runtime SQLite DB & Generated User PDFs
+reports/generated_pdfs/*.pdf
+reports/geoflood.db
+
+# Heavy Colab/PyTorch Checkpoints (>100MB)
+*.pth
+*.pt
+*.bin
+artifacts/checkpoints/
+artifacts/geoflood_colab/models/

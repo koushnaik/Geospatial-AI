@@ -1,0 +1,266 @@
+{
+  "numeric_features": [
+    "T1d",
+    "T2d",
+    "T3d",
+    "T4d",
+    "T5d",
+    "T6d",
+    "T7d",
+    "T8d",
+    "T9d",
+    "T10d",
+    "Drainage Area",
+    "Catchment Relief",
+    "Catchment Length",
+    "Catchment Perimeter",
+    "Drainage Density",
+    "Stream Order",
+    "Sinuosity Index",
+    "Form Factor",
+    "Relief Ratio",
+    "Elongation Ratio",
+    "Circularity Ratio",
+    "Annual Precipitation",
+    "Precipitation Seasonality",
+    "Annual Mean Temperature"
+  ],
+  "categorical_features": [
+    "Soil type",
+    "Land cover",
+    "lithology type",
+    "KoppenGeiger Climate Type"
+  ],
+  "units": {
+    "T1d": "mm (1-day accumulated rainfall)",
+    "T2d": "mm (2-day accumulated rainfall)",
+    "T3d": "mm (3-day accumulated rainfall)",
+    "T4d": "mm (4-day accumulated rainfall)",
+    "T5d": "mm (5-day accumulated rainfall)",
+    "T6d": "mm (6-day accumulated rainfall)",
+    "T7d": "mm (7-day accumulated rainfall)",
+    "T8d": "mm (8-day accumulated rainfall)",
+    "T9d": "mm (9-day accumulated rainfall)",
+    "T10d": "mm (10-day accumulated rainfall)",
+    "Drainage Area": "km\u00b2 (catchment drainage area)",
+    "Catchment Relief": "m (elevation difference divide to outlet)",
+    "Catchment Length": "km (maximal flow path length)",
+    "Catchment Perimeter": "km (catchment boundary perimeter)",
+    "Drainage Density": "km/km\u00b2 (stream length per unit area)",
+    "Stream Order": "Strahler order (network branching)",
+    "Sinuosity Index": "dimensionless ratio (MFL/DVL)",
+    "Form Factor": "dimensionless ratio (DA/CL\u00b2)",
+    "Relief Ratio": "dimensionless ratio (CR/CL)",
+    "Elongation Ratio": "dimensionless ratio",
+    "Circularity Ratio": "dimensionless ratio",
+    "Annual Precipitation": "mm/year (mean annual precipitation)",
+    "Precipitation Seasonality": "coefficient of variation (%)",
+    "Annual Mean Temperature": "\u00b0C (mean annual temperature)",
+    "Soil type": "FAO soil classification class",
+    "Land cover": "dominant land cover category",
+    "lithology type": "dominant rock / lithology category",
+    "KoppenGeiger Climate Type": "climate zone classification"
+  },
+  "categorical_options": {
+    "Soil type": [
+      "Acrisols",
+      "Cambisols",
+      "Fluvisols",
+      "Leptosols",
+      "Lixisols",
+      "Luvisols",
+      "No dominant class",
+      "Vertisols"
+    ],
+    "Land cover": [
+      "Cropland",
+      "Forest",
+      "Mosaic vegetation",
+      "No dominant class"
+    ],
+    "lithology type": [
+      "Acid plutonic rocks",
+      "Basic volcanic rocks",
+      "Metamorphics",
+      "No dominant class",
+      "Siliciclastic sedimentary rocks",
+      "Unconsolidated sediments"
+    ],
+    "KoppenGeiger Climate Type": [
+      "Arid",
+      "No dominant class",
+      "Temperate",
+      "Tropical"
+    ]
+  },
+  "numeric_ranges": {
+    "T1d": {
+      "min": 0.0,
+      "max": 367.7128925,
+      "mean": 39.3,
+      "median": 25.15,
+      "std": 43.3
+    },
+    "T2d": {
+      "min": 0.0,
+      "max": 700.4297425,
+      "mean": 70.49,
+      "median": 47.55,
+      "std": 72.83
+    },
+    "T3d": {
+      "min": 0.0,
+      "max": 809.3213333,
+      "mean": 94.43,
+      "median": 64.08,
+      "std": 96.44
+    },
+    "T4d": {
+      "min": 0.0,
+      "max": 1015.698287,
+      "mean": 115.06,
+      "median": 78.9,
+      "std": 117.57
+    },
+    "T5d": {
+      "min": 0.0,
+      "max": 1166.75923,
+      "mean": 134.72,
+      "median": 92.74,
+      "std": 137.57
+    },
+    "T6d": {
+      "min": 0.0,
+      "max": 1314.216843,
+      "mean": 154.06,
+      "median": 107.63,
+      "std": 156.95
+    },
+    "T7d": {
+      "min": 0.0,
+      "max": 1400.355017,
+      "mean": 173.23,
+      "median": 121.72,
+      "std": 176.58
+    },
+    "T8d": {
+      "min": 0.0,
+      "max": 1773.508063,
+      "mean": 191.7,
+      "median": 135.31,
+      "std": 195.43
+    },
+    "T9d": {
+      "min": 0.0,
+      "max": 2057.003275,
+      "mean": 209.83,
+      "median": 148.38,
+      "std": 214.21
+    },
+    "T10d": {
+      "min": 0.0,
+      "max": 2123.625122,
+      "mean": 227.04,
+      "median": 161.44,
+      "std": 231.23
+    },
+    "Drainage Area": {
+      "min": 24.7110157,
+      "max": 305683.8125,
+      "mean": 16937.29,
+      "median": 8031.31,
+      "std": 23830.46
+    },
+    "Catchment Relief": {
+      "min": 4.0,
+      "max": 7735.0,
+      "mean": 1313.83,
+      "median": 1050.0,
+      "std": 1222.83
+    },
+    "Catchment Length": {
+      "min": 5290.930664,
+      "max": 938523.5625,
+      "mean": 168188.78,
+      "median": 128386.24,
+      "std": 125084.68
+    },
+    "Catchment Perimeter": {
+      "min": 16920.5918,
+      "max": 4014486.0,
+      "mean": 646456.53,
+      "median": 535352.31,
+      "std": 503816.87
+    },
+    "Drainage Density": {
+      "min": 7.33e-05,
+      "max": 0.000192187,
+      "mean": 0.0,
+      "median": 0.0,
+      "std": 0.0
+    },
+    "Stream Order": {
+      "min": 1.0,
+      "max": 7.0,
+      "mean": 4.23,
+      "median": 4.0,
+      "std": 1.15
+    },
+    "Sinuosity Index": {
+      "min": 1.042151451,
+      "max": 3.222101688,
+      "mean": 1.64,
+      "median": 1.48,
+      "std": 0.54
+    },
+    "Form Factor": {
+      "min": 0.122889385,
+      "max": 1.17961359,
+      "mean": 0.44,
+      "median": 0.45,
+      "std": 0.17
+    },
+    "Relief Ratio": {
+      "min": 0.000297355,
+      "max": 0.1151499,
+      "mean": 0.01,
+      "median": 0.01,
+      "std": 0.01
+    },
+    "Elongation Ratio": {
+      "min": 6.83e-12,
+      "max": 1.35e-07,
+      "mean": 0.0,
+      "median": 0.0,
+      "std": 0.0
+    },
+    "Circularity Ratio": {
+      "min": 0.140669942,
+      "max": 1.084599376,
+      "mean": 0.39,
+      "median": 0.37,
+      "std": 0.12
+    },
+    "Annual Precipitation": {
+      "min": 588.617322,
+      "max": 6177.069164,
+      "mean": 1809.3,
+      "median": 1286.53,
+      "std": 1200.97
+    },
+    "Precipitation Seasonality": {
+      "min": 57.573687,
+      "max": 162.405361,
+      "mean": 111.85,
+      "median": 110.53,
+      "std": 25.05
+    },
+    "Annual Mean Temperature": {
+      "min": 7.806537,
+      "max": 28.737499,
+      "mean": 24.57,
+      "median": 25.36,
+      "std": 3.07
+    }
+  }
+}
